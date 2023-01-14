@@ -82,7 +82,7 @@ class AuthService {
     const otp = generateRandom(6, 'numeric');
     await NotificationService.sendSMS({
       message: `Your One Time Password(OTP) is ${otp}. This will expire after 5 minutes`,
-      phonenumber,
+      phonenumber: String(phonenumber),
     });
     // ==> create on DB
     authOtpRepo.create({
