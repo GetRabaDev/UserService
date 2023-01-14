@@ -1,0 +1,19 @@
+org: adejuwon
+app: user-authentication-service
+service: user-authentication-service
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+
+functions:
+  hello:
+    handler: app.handler
+    timeout: 30
+    events:
+      - http: ANY /
+      - http: 'ANY /{proxy+}'
+plugins:
+  - serverless-offline
