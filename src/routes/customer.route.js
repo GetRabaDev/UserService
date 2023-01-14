@@ -12,9 +12,9 @@ const router = express.Router();
 router.use(verify);
 
 // learning
-router.get('/details/:user_id',  getUserDetails);
+router.get('/details/:user_id', getUserDetails);
 
-router.get('/list-all',  listAllUsers);
+router.get('/list-all', listAllUsers);
 
 router.patch('/update-user/:user_id', updateUser);
 
