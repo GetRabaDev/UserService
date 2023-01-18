@@ -13,6 +13,18 @@ class NotificationService {
     );
     return response;
   };
+
+  static sendEmail = async (payload) => {
+    console.log(payload);
+    const response = await axiosPOST(
+      `${process.env.NOTIFICATION_BASE_URL}/api/v1/notification/email`,
+      payload,
+      {
+        Authorization: `Bearer ${process.env.SERVICE_TOKEN}`,
+      }
+    );
+    return response;
+  };
 }
 
 module.exports = {

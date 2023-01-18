@@ -80,11 +80,25 @@ class AuthService {
      *  ==> Call the Notification Service <==
      */
     const otp = generateRandom(6, 'numeric');
-    await NotificationService.sendSMS({
-      message: `Your One Time Password(OTP) is ${otp}. This will expire after 5 minutes`,
-      phonenumber: String(phonenumber),
-    });
+    const promises = [];
+    promises.push(
+      await NotificationService.sendSMS({
+        message: `Your One Time Password(OTP) is ${otp}. This will expire after 5 minutes`,
+        phonenumber: String(phonenumber),
+      })
+    );
+
+    promises.push(
+      await NotificationService.sendEmail({
+        email: email.toLowerCase().trim(),
+        subject: 'Account Created',
+        firstname,
+        message: `Your One Time Password(OTP) is <b>${otp}</b>. This will expire after 5 minutes`,
+        showButton: true,
+      })
+    );
     // ==> create on DB
+    await Promise.all(promises);
     authOtpRepo.create({
       user_id: create_customer._id,
       otp,
