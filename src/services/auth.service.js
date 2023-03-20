@@ -31,6 +31,18 @@ class AuthService {
     /**
      *  ==> Call Notification Service <==
      */
+    const promises = [];
+    promises.push(
+      await NotificationService.sendEmail({
+        email: email.toLowerCase().trim(),
+        subject: 'Account Login',
+        firstname,
+        message: `You logged in at ${moment(new Date()).format('DD-MM-YYYY')}.`,
+        showButton: false,
+      })
+    );
+    // ==> create on DB
+    await Promise.all(promises);
     return { message: 'success', user, ...token };
     // } catch (e) {
     //   console.error(e);
