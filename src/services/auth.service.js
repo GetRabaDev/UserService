@@ -66,6 +66,7 @@ class AuthService {
       httpStatus.BAD_REQUEST,
       'Passwords do not match'
     );
+    //for testing sakes
     password = password.trim();
     const hashed_password = await hash(password);
 
