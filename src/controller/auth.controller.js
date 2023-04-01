@@ -28,8 +28,20 @@ const verifyOtp = catchAsync(async (req, res, next) => {
   return successResponse(req, res, customer);
 });
 
+const registerPhone = catchAsync(async (req, res, next) => {
+  const customer = await authService.registerPhonenumber(req.body.phone);
+  return successResponse(req, res, customer);
+});
+
+const verifyPhone = catchAsync(async (req, res, next) => {
+  const customer = await authService.verifyPhonenumber(req.body);
+  return successResponse(req, res, customer);
+});
+
 module.exports = {
   customerLogin,
   customerSignUp,
   verifyOtp,
+  registerPhone,
+  verifyPhone
 };

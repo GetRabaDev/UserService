@@ -49,17 +49,50 @@ class AuthService {
     // }
   };
 
+  registerPhonenumber = async (phone) => {
+    //check if phonenumber exists
+    const promises = [];
+    const user =  await userRepo.findCustomer({phonenumber: phone})
+    abortIf(user, httpStatus.BAD_REQUEST, 'Phonenumber already exists.')
+    //store customer on DB
+    // const createUser = await userRepo.customerCreate({phonenumber: phone})
+    //send otp to phone number using termii
+    const otp = '123456' //generateRandom(6, 'numeric');
+    await authOtpRepo.create({
+      phonenumber: phone,
+      otp,
+      created_at: new Date(),
+    })
+    promises.push(
+      await NotificationService.sendSMS({
+        message: `Your One Time Password(OTP) is ${otp}. This will expire after 5 minutes`,
+        phonenumber: String(phone),
+      })
+    );
+    await Promise.all(promises);
+    return {message: 'Otp sent to your phone.'}
+  }
+
+  verifyPhonenumber = async({phone, otp}) => {
+    //check if otp and phone match
+    const otpCheck = await authOtpRepo.findOtp({phonenumber: phone, otp})
+    abortIf(!otpCheck, httpStatus.BAD_REQUEST, 'Invalid OTP')
+    const findUser = await userRepo.findCustomer({phonenumber: phone})
+    abortIf(findUser, httpStatus.BAD_REQUEST, 'Phone number already in use.')
+    const createUser = await userRepo.customerCreate({verified: true, phonenumber: phone})
+    return createUser
+  }
+
   customerSignUp = async (data) => {
     // try {
+
     let {
       email,
       password,
       confirmPassword,
       firstname,
       lastname,
-      phonenumber,
-      bio,
-      date_of_birth,
+      phonenumber
     } = data;
     abortIf(
       password !== confirmPassword,
@@ -70,12 +103,12 @@ class AuthService {
     password = password.trim();
     const hashed_password = await hash(password);
 
-    const user = await userRepo.findCustomer({ email, phonenumber });
+    const user = await userRepo.findCustomer({ phonenumber, verified: true });
     console.log(user);
     abortIf(
-      user,
+      !user,
       httpStatus.BAD_REQUEST,
-      'Email or Phonenumber already exists'
+      'Please verify this phonenumber'
     );
     //create provider
     const _data = {
@@ -84,39 +117,25 @@ class AuthService {
       firstname,
       lastname,
       phonenumber,
-      date_of_birth: new Date(moment(date_of_birth).format('YYYY-MM-DD')),
     };
-    const create_customer = await userRepo.customerCreate(_data);
+    const create_customer = await userRepo.update(user._id, _data);
     console.log(create_customer);
     /**
      * => generate TOKEN
      *  ==> Call the Notification Service <==
      */
-    const otp = generateRandom(6, 'numeric');
     const promises = [];
-    promises.push(
-      await NotificationService.sendSMS({
-        message: `Your One Time Password(OTP) is ${otp}. This will expire after 5 minutes`,
-        phonenumber: String(phonenumber),
-      })
-    );
-
     promises.push(
       await NotificationService.sendEmail({
         email: email.toLowerCase().trim(),
         subject: 'Account Created',
         firstname,
-        message: `Your One Time Password(OTP) is <b>${otp}</b>. This will expire after 5 minutes`,
+        message: `Your account has been created, kindly activate your account with the link below`,
         showButton: true,
       })
     );
     // ==> create on DB
     await Promise.all(promises);
-    authOtpRepo.create({
-      user_id: create_customer._id,
-      otp,
-      created_at: new Date(),
-    });
     // ==> send to notification service
 
     const token = await generateToken(create_customer);

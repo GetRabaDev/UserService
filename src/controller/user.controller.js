@@ -1,6 +1,6 @@
 // const catchAsync = require('../utils/catchAsync');
 const catchAsync = require('../utils/catchAsync');
-const { CustomerService } = require('../services');
+const customerService = require('../services/customer.service');
 const {
   successResponse,
   abortIf,
@@ -9,27 +9,14 @@ const {
   downloadPdfFile,
   downloadFile,
 } = require('../utils/responder');
-const { paginate, paginateOptions } = require('../utils/paginate');
+const { paginateOptions } = require('../utils/paginate');
 
-const customerService = new CustomerService();
-
-const getUserDetails = catchAsync(async (req, res, next) => {
-  const result = await customerService.getUserDetails(req.params.user_id);
-  return successResponse(req, res, result);
-});
-
-const updateUser = catchAsync(async (req, res, next) => {
-  const result = await customerService.updateUser(req.params.user_id, req.body);
-  return successResponse(req, res, result);
-});
-
-const listAllUsers = catchAsync(async (req, res, next) => {
-  const result = await customerService.listAllUsers();
+const listingsController = catchAsync(async (req, res, next) => {
+  const paginate = paginateOptions(req)
+  const result = await customerService.listings(req.query.search, paginate);
   return successResponse(req, res, result);
 });
 
 module.exports = {
-  getUserDetails,
-  updateUser,
-  listAllUsers,
+  listingsController
 };

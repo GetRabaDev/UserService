@@ -23,6 +23,11 @@ function generate(length, characters) {
   return result;
 }
 
+function listingCategory(){
+  return ['GADGET']
+}
+
 module.exports = {
   generateRandom,
+  listingCategory
 };

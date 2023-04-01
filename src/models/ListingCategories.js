@@ -6,12 +6,8 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const AuthOtpSchema = new Schema({
-  phonenumber: {
-    type: String,
-    required: true,
-  },
-  otp: {
+const ListingCategorySchema = new Schema({
+  name: {
     type: String,
     required: true,
   },
@@ -20,7 +16,7 @@ const AuthOtpSchema = new Schema({
   },
 });
 
-const AuthOtp = mongoose.model('AuthOtp', AuthOtpSchema);
+const ListingCategory = mongoose.model('ListingCategory', ListingCategorySchema);
 
 // UserSchema.pre('remove', async (document) => {
 //   const user_id = document._id;
@@ -28,4 +24,4 @@ const AuthOtp = mongoose.model('AuthOtp', AuthOtpSchema);
 //   await Testimony.deleteMany({ user: user_id });
 // });
 
-module.exports = AuthOtp;
+module.exports = ListingCategory;

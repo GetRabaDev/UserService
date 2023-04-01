@@ -9,11 +9,9 @@ const { Schema } = mongoose;
 const UserSchema = new Schema({
   firstname: {
     type: String,
-    required: true,
   },
   lastname: {
     type: String,
-    required: true,
   },
   profile_picture: {
     type: String,
@@ -25,11 +23,9 @@ const UserSchema = new Schema({
   },
   email: {
     type: String,
-    required: true,
   },
   password: {
     type: String,
-    required: true,
   },
   activate_token: { type: String },
   verified: {
@@ -39,7 +35,6 @@ const UserSchema = new Schema({
   },
   date_of_birth: {
     type: String,
-    required: true,
   },
 });
 

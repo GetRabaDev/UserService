@@ -38,6 +38,7 @@
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.39",
     "mongoose": "^6.6.6",
+    "mongoose-paginate-v2": "^1.7.1",
     "serverless-http": "^3.1.0",
     "uuid": "^9.0.0"
   },
